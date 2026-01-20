@@ -16,17 +16,18 @@
 
     <style>
         :root {
-            --bg-body: #0a0a0a;
-            --bg-sidebar: #111111;
-            --bg-card: #181818;
-            --primary-accent: #6f42c1;
-            /* Purple */
-            --primary-accent-hover: #5e37a6;
-            --secondary-accent: #0dcaf0;
-            /* Cyan */
-            --text-main: #e0e0e0;
-            --text-muted: #a0a0a0;
-            --border-color: #2a2a2a;
+            --bg-body: #080808;
+            --bg-sidebar: #0f0f0f;
+            --bg-card: #141414;
+            --primary-accent: #8b5cf6;
+            /* Modern Purple */
+            --primary-accent-hover: #7c3aed;
+            --secondary-accent: #06b6d4;
+            /* Sky Cyan */
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --border-color: #1f2937;
+            --sidebar-width: 310px;
         }
 
         body {
@@ -34,24 +35,32 @@
             color: var(--text-main);
             font-family: 'Inter', sans-serif;
             overflow: hidden;
-            /* Main layout handles scroll */
             height: 100vh;
+            display: flex;
         }
 
-        /* --- Sidebar --- */
-        .sidebar {
-            width: 320px;
+        /* --- Sidebars --- */
+        .sidebar-left,
+        .sidebar-right {
+            width: var(--sidebar-width);
+            min-width: var(--sidebar-width);
+            max-width: var(--sidebar-width);
             background-color: var(--bg-sidebar);
-            border-right: 1px solid var(--border-color);
             height: 100vh;
             display: flex;
             flex-direction: column;
-            position: fixed;
-            left: 0;
-            top: 0;
+            padding: 1.25rem;
             z-index: 1000;
-            padding: 1.5rem;
             overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .sidebar-left {
+            border-right: 1px solid var(--border-color);
+        }
+
+        .sidebar-right {
+            border-left: 1px solid var(--border-color);
         }
 
         .brand-title {
@@ -71,74 +80,96 @@
             border-radius: 12px;
             padding: 1.25rem;
             margin-bottom: 1.5rem;
-            transition: border-color 0.2s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .control-group:hover,
         .control-group:focus-within {
-            border-color: #444;
+            border-color: #3b82f6;
+            /* Blue glow on focus */
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
         }
 
         .control-label {
             color: var(--text-muted);
-            font-size: 0.75rem;
+            font-size: 0.65rem;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
+            letter-spacing: 0.8px;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
             display: block;
         }
 
         .form-control,
         .form-select {
-            background-color: #222;
-            border: 1px solid #333;
+            background-color: #1a1a1a;
+            border: 1px solid var(--border-color);
             color: white;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             border-radius: 6px;
+            padding: 0.4rem 0.75rem;
         }
 
         .form-control:focus,
         .form-select:focus {
-            background-color: #2a2a2a;
+            background-color: #262626;
             border-color: var(--primary-accent);
-            box-shadow: 0 0 0 2px rgba(111, 66, 193, 0.25);
+            box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
             color: white;
         }
 
         .btn-primary {
-            background-color: var(--primary-accent);
+            background: linear-gradient(135deg, var(--primary-accent), #6366f1);
             border: none;
-            padding: 0.6rem 1rem;
+            padding: 0.5rem 0.8rem;
             font-weight: 600;
-            border-radius: 8px;
+            font-size: 0.8rem;
+            border-radius: 6px;
             width: 100%;
             transition: all 0.2s;
         }
 
         .btn-primary:hover {
-            background-color: var(--primary-accent-hover);
             transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+            filter: brightness(1.1);
         }
 
         .btn-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+            border: none;
             width: 100%;
             font-weight: 600;
-            border-radius: 8px;
+            font-size: 0.8rem;
+            border-radius: 6px;
+            padding: 0.5rem 0.8rem;
         }
 
         /* --- Main Content --- */
         .main-content {
-            margin-left: 320px;
+            flex-grow: 1;
             height: 100vh;
-            overflow-y: scroll;
-            padding: 2rem;
+            overflow-y: auto;
+            padding: 0 2rem 2rem 2rem;
+            background: radial-gradient(circle at top left, #111, var(--bg-body));
+            position: relative;
+        }
+
+        .main-header {
+            position: sticky;
+            top: 0;
+            background-color: var(--bg-body);
+            padding-top: 2rem;
+            padding-bottom: 1.5rem;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            margin-bottom: 2rem;
         }
 
         /* --- Gallery --- */
         .gallery-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 1.5rem;
             padding-bottom: 3rem;
         }
@@ -150,14 +181,14 @@
             background: #000;
             aspect-ratio: 16/9;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            transition: all 0.3s ease;
             cursor: pointer;
-            border: 1px solid #222;
+            border: 2px solid transparent;
         }
 
         .gallery-item:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            transform: scale(1.02);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
             border-color: var(--primary-accent);
         }
 
@@ -172,132 +203,161 @@
             bottom: 0;
             left: 0;
             right: 0;
-            padding: 10px;
-            background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+            padding: 12px;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.95), transparent);
             color: #fff;
-            opacity: 0.8;
+            opacity: 0.9;
             font-size: 0.8rem;
-        }
-
-        /* --- Scrollbar --- */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #333;
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #444;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
         }
 
         /* --- Status Log --- */
-        /* Selection Checkbox */
-        .select-check {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 20px;
-            height: 20px;
-            accent-color: var(--primary-accent);
-            z-index: 10;
-        }
-
-        .gallery-item.selected {
-            border-color: var(--primary-accent);
-            box-shadow: 0 0 10px rgba(111, 66, 193, 0.4);
-        }
-
         .status-log {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75rem;
-            color: #7fdbac;
-            /* VSCode generic green string color */
-            background: #0d0d0d;
-            border: 1px solid #222;
-            border-radius: 8px;
-            padding: 10px;
-            height: 200px;
-            /* overflow-y: auto; */
-            margin-top: auto;
-            /* Push to bottom of sidebar */
+            font-size: 0.72rem;
+            color: #10b981;
+            /* Emerald Green */
+            background: #020202;
+            border: 1px solid #111;
+            border-radius: 12px;
+            padding: 1rem;
+            flex-grow: 1;
+            overflow-y: auto;
+            box-shadow: inset 0 4px 12px rgba(0, 0, 0, 0.8);
+            line-height: 1.4;
         }
 
-        .spin {
-            animation: spin 1s infinite linear;
+        .status-log div {
+            margin-bottom: 6px;
+            border-left: 2px solid transparent;
+            padding-left: 10px;
+            opacity: 0.85;
+            animation: terminalEntry 0.3s ease-out forwards;
         }
 
-        @keyframes spin {
-            100% {
-                transform: rotate(360deg);
+        @keyframes terminalEntry {
+            from {
+                opacity: 0;
+                transform: translateX(-5px);
+            }
+
+            to {
+                opacity: 0.85;
+                transform: translateX(0);
             }
         }
 
+        .status-log div:last-child {
+            color: #34d399;
+            border-left-color: var(--secondary-accent);
+            background: rgba(16, 185, 129, 0.05);
+            opacity: 1;
+            font-weight: 600;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade {
+            animation: fadeIn 0.4s ease forwards;
+        }
+
         .pulse-dot {
-            height: 8px;
-            width: 8px;
+            height: 10px;
+            width: 10px;
             background-color: var(--secondary-accent);
             border-radius: 50%;
             display: inline-block;
-            margin-right: 6px;
-            box-shadow: 0 0 8px var(--secondary-accent);
+            margin-right: 8px;
+            box-shadow: 0 0 12px var(--secondary-accent);
             animation: pulse 2s infinite;
         }
 
         @keyframes pulse {
             0% {
+                transform: scale(0.95);
                 opacity: 1;
             }
 
             50% {
+                transform: scale(1.1);
                 opacity: 0.5;
             }
 
             100% {
+                transform: scale(0.95);
                 opacity: 1;
             }
-        }
-
-        /* Utility */
-        .text-accent {
-            color: var(--secondary-accent);
         }
 
         .hidden {
             display: none !important;
         }
 
-        .focus-ring-custom {
-            animation: glow 1.5s infinite alternate;
+        .select-check {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 22px;
+            height: 22px;
+            accent-color: var(--primary-accent);
+            z-index: 10;
+            cursor: pointer;
         }
 
-        @keyframes glow {
-            from {
-                box-shadow: 0 0 5px var(--primary-accent);
-            }
+        .gallery-item.selected {
+            border-color: var(--primary-accent);
+            transform: scale(0.98);
+        }
 
-            to {
-                box-shadow: 0 0 20px var(--primary-accent);
-            }
+        /* --- Collapse Styles --- */
+        .collapse-toggle {
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .collapse-toggle.rotated {
+            transform: rotate(-90deg);
+        }
+
+        .collapsible-content {
+            max-height: 500px;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s;
+            opacity: 1;
+        }
+
+        .collapsible-content.collapsed {
+            max-height: 0;
+            opacity: 0;
+            margin-top: 0 !important;
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
         }
     </style>
 </head>
 
 <body>
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
+    <!-- SIDEBAR LEFT: Controls -->
+    <aside class="sidebar-left">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div class="brand-title m-0">
                 <i class="bi bi-layers-fill text-accent"></i>
-                <span>Lossless<span class="text-secondary opacity-75">Cut</span></span>
+                <span>Lossless<span class="text-secondary opacity-75">Cut</span> <span class="badge bg-primary ms-1"
+                        style="font-size: 0.6rem;">G2</span></span>
             </div>
             <div class="d-flex gap-2">
                 <i id="systemStatusIcon" class="bi bi-question-circle-fill text-secondary" title="System Check"
@@ -310,8 +370,8 @@
         </div>
 
         <!-- Setup/Config -->
-        <div class="control-group">
-            <span class="control-label">Input Source</span>
+        <div id="inputSourceContainer" class="control-group">
+            <span class="control-label">1. Input Source</span>
             <div class="input-group mb-2">
                 <button class="btn btn-outline-secondary" onclick="openFileBrowser()" title="Browse Folder">
                     <i class="bi bi-folder2-open"></i>
@@ -327,28 +387,33 @@
             </select>
         </div>
 
-        <div class="control-group">
-            <span class="control-label">Extraction Logic</span>
-            <div class="d-flex justify-content-between align-items-center mb-1">
-                <span class="small text-muted">Sensitivity</span>
-                <span id="threshVal" class="badge bg-secondary">50000</span>
-            </div>
-            <input type="range" id="thresholdRange" class="form-range" min="1000" max="100000" step="1000" value="50000"
-                oninput="updateThresh(this.value)">
-            <div class="d-flex justify-content-between text-muted" style="font-size: 0.7rem;">
-                <span>More Frames</span>
-                <span>Less Frames</span>
+        <!-- Extraction Container -->
+        <div id="extractionContainer" class="control-group">
+            <div class="d-flex justify-content-between align-items-center mb-0" style="cursor: pointer;"
+                onclick="toggleCollapse('extractionBody', 'extractionChevron')">
+                <span class="control-label mb-0">2. Extraction Logic</span>
+                <i id="extractionChevron" class="bi bi-chevron-down collapse-toggle" style="font-size: 0.8rem;"></i>
             </div>
 
-            <button id="startBtn" class="btn btn-primary mt-3" onclick="startProcessing()">
-                <i class="bi bi-play-fill"></i> Start Extraction
-            </button>
-            <button id="stopBtn" class="btn btn-danger mt-3 hidden" onclick="stopProcessing()">Stop</button>
+            <div id="extractionBody" class="collapsible-content mt-3">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="small text-muted" style="font-size: 0.65rem;">Sensitivity</span>
+                    <span id="threshVal" class="badge bg-secondary" style="font-size: 0.6rem;">50000</span>
+                </div>
+                <input type="range" id="thresholdRange" class="form-range" min="1000" max="100000" step="1000"
+                    value="50000" oninput="updateThresh(this.value)">
+
+                <button id="startBtn" class="btn btn-primary btn-sm mt-3 py-1" onclick="startProcessing()">
+                    <i class="bi bi-play-fill"></i> Start Extraction
+                </button>
+                <button id="stopBtn" class="btn btn-danger btn-sm mt-3 py-1 hidden"
+                    onclick="stopProcessing()">Stop</button>
+            </div>
         </div>
 
-        <!-- Logo Removal -->
-        <div class="control-group">
-            <span class="control-label">Logo Removal (Batch)</span>
+        <!-- Logo Removal Container (Hidden initially) -->
+        <div id="logoRemovalContainer" class="control-group hidden">
+            <span class="control-label">3. Logo Removal (Batch)</span>
             <div class="row g-2 mb-2">
                 <div class="col-6">
                     <label class="small text-muted">X</label>
@@ -372,30 +437,14 @@
             </button>
         </div>
 
-        <!-- Progress -->
-        <div id="progressSection" class="control-group hidden">
-            <span class="control-label">Status</span>
-            <div class="d-flex align-items-center mb-2">
-                <span class="pulse-dot"></span>
-                <span id="statusText" class="small text-white">Processing...</span>
-            </div>
-            <div class="progress" style="height: 6px; background: #333;">
-                <div id="progressBar" class="progress-bar bg-info" role="progressbar" style="width: 0%"></div>
-            </div>
-            <div class="d-flex justify-content-between mt-1 text-muted" style="font-size: 0.7rem;">
-                <span id="currentTime">00:00</span>
-                <span id="totalTime">00:00</span>
-            </div>
-        </div>
-
-        <!-- Render Section (Hidden until needed) -->
-        <div id="renderSection" class="control-group opacity-50" style="pointer-events: none;">
+        <!-- Render Output Container (Hidden initially) -->
+        <div id="renderOutputContainer" class="control-group opacity-50 hidden" style="pointer-events: none;">
             <div class="d-flex justify-content-between align-items-center mb-2">
-                <span class="control-label mb-0 text-accent">Render Output</span>
+                <span class="control-label mb-0 text-accent">4. Render Output</span>
                 <i class="bi bi-lock-fill text-muted" id="renderLockIcon"></i>
             </div>
 
-            <input type="text" id="renderName" class="form-control mb-2" placeholder="Auto Name (Original)">
+            <input type="text" id="renderName" class="form-control mb-2" placeholder="Output Name (Optional)">
 
             <div class="d-flex align-items-center justify-content-between mb-2">
                 <span class="small text-muted">Quality (CRF <span id="crfVal">23</span>)</span>
@@ -417,15 +466,14 @@
             </button>
         </div>
 
-        <!-- Log -->
-        <div class="status-log" id="statusLog">
-            > Ready.
+        <div class="mt-auto text-center opacity-25 small text-muted">
+            LosslessCut G2 v2.0.0
         </div>
     </aside>
 
     <!-- MAIN GALLERY -->
     <main class="main-content">
-        <header class="d-flex justify-content-between align-items-center mb-4">
+        <header class="main-header d-flex justify-content-between align-items-center">
             <div>
                 <h2 class="fw-bold m-0 text-white">Gallery</h2>
                 <div class="d-flex align-items-center gap-2 mt-1">
@@ -453,6 +501,41 @@
             <p class="mt-3">Select a video and start extraction to see frames here.</p>
         </div>
     </main>
+
+    <!-- SIDEBAR RIGHT: Status & Logs -->
+    <aside class="sidebar-right">
+        <div class="brand-title m-0 mb-4">
+            <i class="bi bi-terminal-fill text-accent"></i>
+            <span>Status <span class="text-secondary opacity-75">Dashboard</span></span>
+        </div>
+
+        <!-- Progress -->
+        <div id="progressSection" class="control-group hidden">
+            <span class="control-label">Action Progress</span>
+            <div class="d-flex align-items-center mb-2">
+                <span class="pulse-dot"></span>
+                <span id="statusText" class="small text-white">Idle</span>
+            </div>
+            <div class="progress" style="height: 8px; background: #222; border-radius: 4px;">
+                <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated bg-info"
+                    role="progressbar" style="width: 0%"></div>
+            </div>
+            <div class="d-flex justify-content-between mt-2 text-muted" style="font-size: 0.75rem;">
+                <span id="currentTime">00:00</span>
+                <span id="totalTime">00:00</span>
+            </div>
+        </div>
+
+        <span class="control-label">Status Logger</span>
+        <div class="status-log" id="statusLog">
+            <div>> System Ready.</div>
+        </div>
+
+        <button class="btn btn-outline-danger btn-sm mt-3 w-100" style="font-size: 0.7rem; opacity: 0.6;"
+            onclick="clearGallery()">
+            <i class="bi bi-trash"></i> Reset All Data
+        </button>
+    </aside>
 
     <!-- Modals -->
     <!-- File Browser -->
@@ -651,17 +734,13 @@
                     el('countBadge').innerText = '0';
                     el('galleryGrid').innerHTML = '';
                     el('emptyState').classList.add('hidden');
-                    el('galleryGrid').innerHTML = '';
-                    el('emptyState').classList.add('hidden');
                     framesList = [];
 
                     // Show Selection Bar
                     el('selectionBar').classList.remove('d-none');
 
-                    // Lock Render
-                    el('renderSection').classList.add('opacity-50');
-                    el('renderSection').style.pointerEvents = 'none';
-                    el('renderLockIcon').classList.remove('d-none');
+                    // Extraction Started Visibility
+                    el('extractionContainer').classList.add('opacity-50');
                     el('startBtn').classList.add('hidden');
                     el('stopBtn').classList.remove('hidden');
                     break;
@@ -678,19 +757,40 @@
 
                 case 'complete':
                     el('progressSection').classList.add('hidden');
-                    el('startBtn').classList.remove('hidden');
                     el('stopBtn').classList.add('hidden');
-                    log(`Extraction Complete. ${data.count} frames.`);
 
-                    // Unlock Render
-                    const renderCard = el('renderSection');
-                    renderCard.classList.remove('opacity-50');
-                    renderCard.style.pointerEvents = 'auto';
-                    el('renderLockIcon').classList.add('d-none');
+                    if (data.subtype === 'extraction') {
+                        log(`Extraction Complete. ${data.count} frames.`);
+                        // G2 Logic: Hide Input Source
+                        el('inputSourceContainer').classList.add('hidden');
 
-                    // Visual Focus Effect
-                    renderCard.classList.add('focus-ring-custom');
-                    setTimeout(() => renderCard.classList.remove('focus-ring-custom'), 4000);
+                        // G2 Logic: COLLAPSE Extraction Logic (instead of hidden)
+                        toggleCollapse('extractionBody', 'extractionChevron', true);
+
+                        // Show Logo Removal
+                        el('logoRemovalContainer').classList.remove('hidden');
+                        el('logoRemovalContainer').classList.add('animate-fade');
+
+                        log("Step 2: Please select frames and apply Logo Removal if needed.");
+                    }
+                    else if (data.subtype === 'logo_removal') {
+                        log(`Logo Removal Complete. ${data.count} frames processed.`);
+                        localStorage.setItem('isLogoRemoved', 'true');
+
+                        // G2 Logic: Show Render Output
+                        const renderCard = el('renderOutputContainer');
+                        renderCard.classList.remove('hidden');
+                        renderCard.classList.add('animate-fade');
+                        renderCard.classList.remove('opacity-50');
+                        renderCard.style.pointerEvents = 'auto';
+                        el('renderLockIcon').classList.add('d-none');
+
+                        // Visual Focus Effect
+                        renderCard.classList.add('focus-ring-custom');
+                        setTimeout(() => renderCard.classList.remove('focus-ring-custom'), 4000);
+
+                        log("Step 3: Ready for Final Render.");
+                    }
                     break;
 
                 case 'error':
@@ -698,6 +798,7 @@
                     el('startBtn').classList.remove('hidden');
                     el('stopBtn').classList.add('hidden');
                     el('progressSection').classList.add('hidden');
+                    el('extractionContainer').classList.remove('opacity-50');
                     break;
 
                 case 'info':
@@ -825,8 +926,8 @@
             });
         }
 
-        async function clearGallery() {
-            if (!confirm("WARNING: This will delete ALL extracted frames and project files from the disk.\nAre you sure?")) return;
+        async function clearGallery(silent = false) {
+            if (!silent && !confirm("WARNING: This will delete ALL extracted frames and project files from the disk.\nAre you sure?")) return;
 
             try {
                 await fetch('/api/project/clear', { method: 'POST' });
@@ -838,17 +939,38 @@
                 el('selectionBar').classList.add('d-none');
 
                 el('selectionCount').innerText = "0 Selected";
-                el('statusLog').innerHTML = '> Ready.';
 
-                // Relock render
-                el('renderSection').classList.add('opacity-50');
-                el('renderSection').style.pointerEvents = 'none';
-                el('renderLockIcon').classList.remove('d-none');
+                if (silent) {
+                    el('statusLog').innerHTML = '<div>> App Reset. Ready for next video.</div>';
+                } else {
+                    el('statusLog').innerHTML = '<div>> Ready.</div>';
+                    log("Project cleared.");
+                }
 
-                log("Project cleared.");
+                // Reset UI Visibility
+                el('inputSourceContainer').classList.remove('hidden');
+
+                // Expand Extraction
+                toggleCollapse('extractionBody', 'extractionChevron', false);
+                el('extractionContainer').classList.remove('hidden');
+                el('extractionContainer').classList.remove('opacity-50');
+
+                el('startBtn').classList.remove('hidden');
+
+                // Clear persistence
+                localStorage.removeItem('isLogoRemoved');
+                el('logoRemovalContainer').classList.add('hidden');
+                el('renderOutputContainer').classList.add('hidden');
+
             } catch (e) {
-                alert("Error clearing project: " + e);
+                if (!silent) alert("Error clearing project: " + e);
             }
+        }
+
+        async function resetApp() {
+            log("Finalizing project... Cleaning up temp files.");
+            await clearGallery(true);
+            log("App is ready for the next task.");
         }
 
         // --- Controls (Extraction) ---
@@ -938,6 +1060,14 @@
                 });
 
                 alert("Logo Removal Complete! Refreshing view...");
+                localStorage.setItem('isLogoRemoved', 'true');
+
+                // Show Render as well
+                const renderCard = el('renderOutputContainer');
+                renderCard.classList.remove('hidden');
+                renderCard.classList.remove('opacity-50');
+                renderCard.style.pointerEvents = 'auto';
+                el('renderLockIcon').classList.add('d-none');
 
                 // Cache Busting: Update all image URLs
                 const ts = new Date().getTime();
@@ -987,11 +1117,24 @@
                     // Show Selection Bar
                     el('selectionBar').classList.remove('d-none');
 
-                    // Unlock Render
-                    const renderCard = el('renderSection');
-                    renderCard.classList.remove('opacity-50');
-                    renderCard.style.pointerEvents = 'auto';
                     el('renderLockIcon').classList.add('d-none');
+
+                    // G2: Hide Input and Collapse Extraction if frames exist
+                    el('inputSourceContainer').classList.add('hidden');
+                    toggleCollapse('extractionBody', 'extractionChevron', true);
+
+                    // Show Logo Removal
+                    el('logoRemovalContainer').classList.remove('hidden');
+
+                    // Show Render only if previously removed logo
+                    if (localStorage.getItem('isLogoRemoved') === 'true') {
+                        const renderCard = el('renderOutputContainer');
+                        renderCard.classList.remove('hidden');
+                        renderCard.classList.remove('opacity-50');
+                        renderCard.style.pointerEvents = 'auto';
+                    } else {
+                        el('renderOutputContainer').classList.add('hidden');
+                    }
 
                     // Set Source Path if known
                     if (data.source) {
@@ -1013,7 +1156,7 @@
             if (last) el('dirInput').value = last;
 
             checkInstallation();
-            loadProject();
+            loadExistingProject();
             updateRenderPathUI();
         });
 
@@ -1038,21 +1181,40 @@
 
         function updateThresh(val) { el('threshVal').innerText = val; }
 
+        function toggleCollapse(bodyId, chevronId, forceCollapse = null) {
+            const body = el(bodyId);
+            const chevron = el(chevronId);
+
+            if (forceCollapse === true) {
+                body.classList.add('collapsed');
+                chevron.classList.add('rotated');
+            } else if (forceCollapse === false) {
+                body.classList.remove('collapsed');
+                chevron.classList.remove('rotated');
+            } else {
+                body.classList.toggle('collapsed');
+                chevron.classList.toggle('rotated');
+            }
+        }
+
         // --- Controls (Render) ---
         async function renderVideo() {
             const btn = el('renderBtn');
             const originalText = btn.innerHTML;
 
-            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Rendering...';
-            btn.disabled = true;
-
-            const name = el('renderName').value || "";
-            const crf = el('crfRange').value;
-
-            // Get checkbox state
-            const saveToSource = el('saveToSourceCheck').checked;
-
             try {
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Rendering...';
+                btn.disabled = true;
+
+                const nameEl = el('renderName');
+                const name = nameEl ? nameEl.value : "";
+
+                const crfEl = el('crfRange');
+                const crf = crfEl ? crfEl.value : "23";
+
+                const saveToSourceCheck = el('saveToSourceCheck');
+                const saveToSource = saveToSourceCheck ? saveToSourceCheck.checked : true;
+
                 const res = await fetch('/api/render', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -1064,9 +1226,17 @@
                 });
                 const data = await res.json();
                 if (data.error) throw new Error(data.error);
+
+                log(`Success: Video rendered at ${data.path}`);
+
+                // Cleanup for next generation - call before alert for "automatic" feel
+                await resetApp();
+
                 alert("Render Complete!\nSaved to: " + data.path);
+
             } catch (e) {
                 alert("Render Failed: " + e.message);
+                log(`Render Failed: ${e.message}`);
             } finally {
                 btn.innerHTML = originalText;
                 btn.disabled = false;

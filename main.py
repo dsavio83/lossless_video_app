@@ -300,7 +300,7 @@ async def process_video_task(video_path_str: str, threshold: float):
         with open(BASE_DIR / "metadata.json", "w") as f:
             json.dump(simple_meta, f)
             
-        await manager.broadcast_status({"type": "complete", "count": saved_count})
+        await manager.broadcast_status({"type": "complete", "subtype": "extraction", "count": saved_count})
 
     except Exception as e:
         logger.error(f"Processing error: {e}")
@@ -521,9 +521,11 @@ async def render_video(req: RenderRequest):
         logger.info(f"Rendering to: {output_file}")
         
         if output_file.exists():
-            output_file.unlink()
-        if output_file.exists():
-            output_file.unlink()
+            try:
+                output_file.unlink()
+                logger.info(f"Existing file removed: {output_file}")
+            except Exception as e:
+                logger.error(f"Failed to remove existing file: {e}")
             
         # 5. Construct Render Command
         cmd = [
@@ -784,7 +786,7 @@ async def remove_logo(req: LogoRemovalRequest):
                 })
                 # Check for stop signal? (Not implemented for this loop deeply yet)
 
-        await manager.broadcast_status({"type": "complete", "count": count})
+        await manager.broadcast_status({"type": "complete", "subtype": "logo_removal", "count": count})
         return {"status": "completed", "processed": count}
         
     except Exception as e:

@@ -224,8 +224,8 @@
             border: 1px solid #222;
             border-radius: 8px;
             padding: 10px;
-            height: 120px;
-            overflow-y: auto;
+            height: 200px;
+            /* overflow-y: auto; */
             margin-top: auto;
             /* Push to bottom of sidebar */
         }
@@ -404,8 +404,10 @@
                 oninput="el('crfVal').innerText = this.value">
 
             <div class="form-check mt-2">
-                <input class="form-check-input" type="checkbox" id="saveToSourceCheck" checked>
-                <label class="form-check-label text-muted small" for="saveToSourceCheck">
+                <input class="form-check-input" type="checkbox" id="saveToSourceCheck" checked
+                    onchange="updateRenderPathUI()">
+                <label class="form-check-label text-muted text-break" for="saveToSourceCheck" id="renderPathLabel"
+                    style="font-size: 0.70rem;">
                     Save to Source "Render Output"
                 </label>
             </div>
@@ -649,7 +651,12 @@
                     el('countBadge').innerText = '0';
                     el('galleryGrid').innerHTML = '';
                     el('emptyState').classList.add('hidden');
+                    el('galleryGrid').innerHTML = '';
+                    el('emptyState').classList.add('hidden');
                     framesList = [];
+
+                    // Show Selection Bar
+                    el('selectionBar').classList.remove('d-none');
 
                     // Lock Render
                     el('renderSection').classList.add('opacity-50');
@@ -830,8 +837,8 @@
                 el('emptyState').classList.remove('hidden');
                 el('selectionBar').classList.add('d-none');
 
-                // Reset Selection Counts
                 el('selectionCount').innerText = "0 Selected";
+                el('statusLog').innerHTML = '> Ready.';
 
                 // Relock render
                 el('renderSection').classList.add('opacity-50');
@@ -869,6 +876,8 @@
                     // Select first by default
                     sel.selectedIndex = 0;
                 }
+
+                updateRenderPathUI(); // Update label with new path
             } catch (e) {
                 log("Failed to load videos.");
             }
@@ -975,6 +984,9 @@
 
                     el('countBadge').innerText = framesList.length;
 
+                    // Show Selection Bar
+                    el('selectionBar').classList.remove('d-none');
+
                     // Unlock Render
                     const renderCard = el('renderSection');
                     renderCard.classList.remove('opacity-50');
@@ -991,6 +1003,36 @@
                 }
             } catch (e) {
                 console.log("No existing project state found or error loading it.");
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load last path
+            const last = localStorage.getItem('lastInputPath');
+            if (last) el('dirInput').value = last;
+
+            checkInstallation();
+            loadProject();
+            updateRenderPathUI();
+        });
+
+        function updateRenderPathUI() {
+            const chk = el('saveToSourceCheck');
+            const lbl = el('renderPathLabel');
+            let sourceDir = el('dirInput').value;
+
+            // Normalize slashes for display
+            if (sourceDir) sourceDir = sourceDir.replace(/\//g, '\\');
+
+            if (chk.checked) {
+                if (sourceDir) {
+                    lbl.innerText = `Save to: ${sourceDir}\\Render Output`;
+                } else {
+                    lbl.innerText = "Save to: [Source Folder]\\Render Output";
+                }
+            } else {
+                lbl.innerText = "Save to: ...\\rendered_video (Default)";
             }
         }
 

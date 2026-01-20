@@ -43,9 +43,10 @@ BASE_DIR = APP_DIR.parent
 INPUT_DIR = BASE_DIR / "input_video"
 OUTPUT_DIR = BASE_DIR / "extracted_frames"
 TEMP_DIR = BASE_DIR / "temp"
+RENDER_DIR = BASE_DIR / "rendered_video"
 
 # Ensure directories
-for d in [INPUT_DIR, OUTPUT_DIR, TEMP_DIR]:
+for d in [INPUT_DIR, OUTPUT_DIR, TEMP_DIR, RENDER_DIR]:
     d.mkdir(parents=True, exist_ok=True)
 
 app.mount("/static", StaticFiles(directory=APP_DIR / "static"), name="static")
@@ -477,14 +478,28 @@ async def render_video(req: RenderRequest):
 
         # 4. Output Path
         final_output_dir = RENDER_DIR
+
+        
+        logger.info(f"Render Request: save_to_source={req.save_to_source}, source_video={source_video}")
         
         if req.save_to_source and source_video:
              # Logic: Source Dir / Render Output
              src_path = Path(source_video)
-             if src_path.exists():
+             
+             # Debug log
+             logger.info(f"Checking source path: {src_path}, Exists: {src_path.exists()}")
+             
+             # If exact file exists OR parent dir exists (if file was moved but dir remains)
+             if src_path.exists() or src_path.parent.exists():
                  custom_out = src_path.parent / "Render Output"
-                 custom_out.mkdir(parents=True, exist_ok=True)
-                 final_output_dir = custom_out
+                 try:
+                     custom_out.mkdir(parents=True, exist_ok=True)
+                     final_output_dir = custom_out
+                     logger.info(f"Set output directory to source subfolder: {final_output_dir}")
+                 except Exception as e:
+                     logger.error(f"Failed to create source output dir: {e}")
+             else:
+                 logger.warning(f"Source path invalid, falling back to default.")
         
         # Ensure dir exists
         final_output_dir.mkdir(parents=True, exist_ok=True)
